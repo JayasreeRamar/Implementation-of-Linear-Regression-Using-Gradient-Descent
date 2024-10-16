@@ -33,57 +33,79 @@ from sklearn.metrics import  mean_absolute_error,mean_squared_error
 import matplotlib.pyplot as plt
 ```
 ```
-dataset = pd.read_csv('student_scores.csv')
-print(dataset.head())
-print(dataset.tail())
+df=pd.read_csv("50_Startups.csv")
+df.head()
 ```
-![alt text](image.png)
+![alt text](image-7.png)
 
 ```
-dataset.info()
+df.tail()
 ```
-![alt text](image-1.png)
+![alt text](image-9.png)
 
 ```
-X=dataset.iloc[:,:-1].values
-print(X)
-Y=dataset.iloc[:,-1].values
-print(Y)
+df.info()
 ```
-![alt text](image-2.png)
+![alt text](image-10.png)
 
 ```
-print(X.shape)
-print(Y.shape)
+x=(df.iloc[1:,:-2].values)
+y=(df.iloc[1:,-1].values).reshape(-1,1)
 ```
-![alt text](image-3.png)
+```
+print(y)
+```
+![alt text](image-11.png)
 
 ```
-m=0
-c=0
-L=0.0001
-epochs=5000
-n=float(len(X))
-error=[]
-for i in range(epochs):
-    Y_pred = m*X +c
-    D_m=(-2/n)*sum(X *(Y-Y_pred))
-    D_c=(-2/n)*sum(Y -Y_pred)
-    m=m-L*D_m
-    c=c-L*D_c
-    error.append(sum(Y-Y_pred)**2)
-print(m,c)
-type(error)
-print(len(error))
+print(x)
 ```
-![alt text](image-4.png)
+![alt text](image-12.png)
 
 ```
-plt.plot(range(0,epochs),error)
+from sklearn.preprocessing import StandardScaler
+scaler=StandardScaler()
+x1_scaled=scaler.fit_transform(x)
+y1_scaled=scaler.fit_transform(y)
 ```
-![alt text](image-5.png)
+```
+print(x1_scaled)
+print(y1_scaled)
+```
+![alt text](image-13.png)
+![alt text](image-14.png)
 
-![alt text](image-6.png)
+```
+def linear_regression(X1,y,learning_rate = 0.01, num_iters = 100):
+    X = np.c_[np.ones(len(X1)),X1]
+    theta = np.zeros(X.shape[1]).reshape(-1,1)
+    for _ in range(num_iters):
+        predictions = (X).dot(theta).reshape(-1,1)
+        
+        #calculate errors
+        errors=(predictions - y ).reshape(-1,1)
+        
+        #update theta using gradiant descent
+        theta -= learning_rate*(1/len(X1))*X.T.dot(errors)
+    return theta
+
+```
+```
+theta=linear_regression(X1_Scaled,Y1_Scaled)
+```
+```
+new_data=np.array([165349.2,136897.8,471784.1]).reshape(-1,1)
+new_Scaled=scaler.fit_transform(new_data)
+prediction=np.dot(np.append(1,new_Scaled),theta)
+prediction=prediction.reshape(-1,1)
+pre=scaler.inverse_transform(prediction)
+```
+```
+print(prediction)
+print(f"Predicted value: {pre}")
+```
+![alt text](image-15.png)
+
 ![linear regression using gradient descent](sam.png)
 
 
